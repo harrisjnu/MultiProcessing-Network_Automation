@@ -1,0 +1,20 @@
+
+    PYTHON Modules
+pip install napalm
+    OS Modules RedHAT/CentOS Distros
+
+    IOS Additional Config
+username admin priviledge 15 password cisco
+ip scp server enable
+enable ssh access
+
+    IOS DEPENDENCY
+yum install -y python-pip gcc openssl openssl-devel libffi-devel python-devel
+    IOS-XR DEPENDENCY
+yum install -y python-pip gcc openssl openssl-devel libffi-devel python-devel
+    JUNOS DEPENDENCY
+yum install -y python-pip python-devel libxml2-devel libxslt-devel gcc openssl openssl-devel libffi-devel
+
+1.  Collect sh run and save as file using napalm cli
+2.  Verify config using compare method of napalm
+3.  Use parallel Processing

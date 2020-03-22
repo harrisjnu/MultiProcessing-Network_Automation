@@ -1,0 +1,424 @@
+version 15.2
+no service pad
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+service compress-config
+!
+hostname DC-CORE
+!
+boot-start-marker
+boot system switch all flash:packages.conf
+boot-end-marker
+!
+!
+vrf definition Mgmt-vrf
+ !
+ address-family ipv4
+ exit-address-family
+ !
+ address-family ipv6
+ exit-address-family
+!
+no logging console
+enable secret 5 $1$ZtYW$7uXg9/TTCi6qbfKeIdt9C.
+enable password 7 02050D480809
+!
+username admin privilege 15 password 7 106A0A390F1907482C452E2E28
+no aaa new-model
+clock timezone IST 5 30
+switch 1 provision ws-c3850-48p
+!
+!
+!
+!
+!
+ip routing
+!
+ip dhcp excluded-address 10.95.0.1 10.95.0.100
+!
+ip dhcp pool SANDBOX-NET95
+ network 10.95.0.0 255.255.248.0
+ default-router 10.95.0.1
+ dns-server 10.99.0.100 1.1.1.1
+ lease infinite
+!
+!
+qos queue-softmax-multiplier 100
+!
+crypto pki trustpoint TP-self-signed-1249160911
+ enrollment selfsigned
+ subject-name cn=IOS-Self-Signed-Certificate-1249160911
+ revocation-check none
+ rsakeypair TP-self-signed-1249160911
+!
+!
+crypto pki certificate chain TP-self-signed-1249160911
+ certificate self-signed 01
+  3082022B 30820194 A0030201 02020101 300D0609 2A864886 F70D0101 05050030
+  31312F30 2D060355 04031326 494F532D 53656C66 2D536967 6E65642D 43657274
+  69666963 6174652D 31323439 31363039 3131301E 170D3137 30383330 30333431
+  33385A17 0D323030 31303130 30303030 305A3031 312F302D 06035504 03132649
+  4F532D53 656C662D 5369676E 65642D43 65727469 66696361 74652D31 32343931
+  36303931 3130819F 300D0609 2A864886 F70D0101 01050003 818D0030 81890281
+  8100B37B 3E891FBB E4F4F029 D5B110D8 17A2F7BA 32273078 81433B18 8D93C659
+  E921F801 0869EFFC B39CE8ED 65F9966B 7017C172 C4B08EED 9F8716EF CC0AD3DF
+  A21A60A2 399B1A7E 4559652C 2ED6812E 175D55DF 2A71962F DD9826B8 390A4800
+  C7223C3E 4E60AAA5 244D5DA2 94F82586 3B90ACD6 25414A21 912F1CEB 013D5B56
+  9BF90203 010001A3 53305130 0F060355 1D130101 FF040530 030101FF 301F0603
+  551D2304 18301680 149F5B30 1386B9DC 9DF8D8D3 DAD643AB 2B8E7C11 52301D06
+  03551D0E 04160414 9F5B3013 86B9DC9D F8D8D3DA D643AB2B 8E7C1152 300D0609
+  2A864886 F70D0101 05050003 81810096 6DE63A79 077683F7 7D63A095 1E1A22F9
+  D704D62B B7B988FC 135C2A34 D3894D80 A7684B22 A58E11DE 4ADB736D 9B6CC36F
+  E64FB6AD 2C25A490 6BB19944 690F95C3 1E9C95E2 B6483F40 9F6C9728 C686AD91
+  EB8D7A73 D131F7CA 8F3982C6 EE13D784 90E5AE9E 9BCA0D0D 960E2FEE 48CA2E78
+  82602BCF C34FABA6 EF20F261 BB585A
+  	quit
+diagnostic bootup level minimal
+spanning-tree mode pvst
+spanning-tree extend system-id
+hw-switch switch 1 logging onboard message level 3
+!
+redundancy
+ mode sso
+!
+lldp run
+!
+!
+class-map match-any non-client-nrt-class
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface GigabitEthernet0/0
+ vrf forwarding Mgmt-vrf
+ no ip address
+ negotiation auto
+!
+interface GigabitEthernet1/0/1
+ switchport mode trunk
+!
+interface GigabitEthernet1/0/2
+ switchport mode trunk
+!
+interface GigabitEthernet1/0/3
+ switchport mode trunk
+!
+interface GigabitEthernet1/0/4
+ switchport mode trunk
+!
+interface GigabitEthernet1/0/5
+ switchport mode trunk
+!
+interface GigabitEthernet1/0/6
+ switchport mode trunk
+!
+interface GigabitEthernet1/0/7
+ switchport mode trunk
+!
+interface GigabitEthernet1/0/8
+ switchport mode trunk
+!
+interface GigabitEthernet1/0/9
+ switchport mode trunk
+!
+interface GigabitEthernet1/0/10
+ switchport mode trunk
+!
+interface GigabitEthernet1/0/11
+ switchport mode trunk
+!
+interface GigabitEthernet1/0/12
+ switchport mode trunk
+!
+interface GigabitEthernet1/0/13
+ switchport access vlan 101
+!
+interface GigabitEthernet1/0/14
+ switchport access vlan 101
+ switchport mode access
+!
+interface GigabitEthernet1/0/15
+ switchport mode trunk
+!
+interface GigabitEthernet1/0/16
+ switchport mode trunk
+!
+interface GigabitEthernet1/0/17
+ switchport mode trunk
+!
+interface GigabitEthernet1/0/18
+ switchport mode trunk
+!
+interface GigabitEthernet1/0/19
+ switchport mode trunk
+!
+interface GigabitEthernet1/0/20
+ switchport mode trunk
+!
+interface GigabitEthernet1/0/21
+ switchport mode trunk
+ shutdown
+!
+interface GigabitEthernet1/0/22
+ switchport mode trunk
+!
+interface GigabitEthernet1/0/23
+ switchport access vlan 192
+ switchport mode access
+ spanning-tree portfast
+!
+interface GigabitEthernet1/0/24
+ switchport mode trunk
+!
+interface GigabitEthernet1/0/25
+ switchport access vlan 192
+ switchport mode access
+!
+interface GigabitEthernet1/0/26
+ switchport access vlan 192
+ switchport mode access
+!
+interface GigabitEthernet1/0/27
+ switchport access vlan 192
+ switchport mode access
+!
+interface GigabitEthernet1/0/28
+ switchport access vlan 192
+ switchport mode access
+!
+interface GigabitEthernet1/0/29
+ switchport access vlan 192
+ switchport mode access
+!
+interface GigabitEthernet1/0/30
+ switchport access vlan 192
+!
+interface GigabitEthernet1/0/31
+!
+interface GigabitEthernet1/0/32
+!
+interface GigabitEthernet1/0/33
+!
+interface GigabitEthernet1/0/34
+ switchport access vlan 50
+!
+interface GigabitEthernet1/0/35
+ switchport access vlan 50
+!
+interface GigabitEthernet1/0/36
+ switchport access vlan 105
+ switchport mode access
+ shutdown
+!
+interface GigabitEthernet1/0/37
+ switchport access vlan 80
+ switchport mode access
+!
+interface GigabitEthernet1/0/38
+!
+interface GigabitEthernet1/0/39
+!
+interface GigabitEthernet1/0/40
+!
+interface GigabitEthernet1/0/41
+!
+interface GigabitEthernet1/0/42
+!
+interface GigabitEthernet1/0/43
+ description WLC_5508
+ switchport mode trunk
+!
+interface GigabitEthernet1/0/44
+ description WLC_5508
+ switchport mode trunk
+!
+interface GigabitEthernet1/0/45
+ switchport access vlan 50
+ switchport mode access
+!
+interface GigabitEthernet1/0/46
+ description WLC-5508-P
+ switchport access vlan 51
+!
+interface GigabitEthernet1/0/47
+ description CCTV-SERVER
+ switchport access vlan 80
+!
+interface GigabitEthernet1/0/48
+ switchport trunk allowed vlan 50,51,80,81,600
+ switchport mode trunk
+ no vtp
+!
+interface GigabitEthernet1/1/1
+!
+interface GigabitEthernet1/1/2
+!
+interface GigabitEthernet1/1/3
+!
+interface GigabitEthernet1/1/4
+!
+interface TenGigabitEthernet1/1/1
+ switchport access vlan 100
+!
+interface TenGigabitEthernet1/1/2
+ description CCTV-SERVER
+ switchport access vlan 101
+ switchport mode access
+!
+interface TenGigabitEthernet1/1/3
+ switchport access vlan 101
+ switchport mode access
+!
+interface TenGigabitEthernet1/1/4
+ switchport mode trunk
+!
+interface Vlan1
+ no ip address
+ shutdown
+!
+interface Vlan100
+ ip address 10.99.0.1 255.255.248.0
+!
+interface Vlan101
+ ip address 10.97.0.1 255.255.248.0
+!
+interface Vlan102
+ ip address 10.98.0.1 255.255.248.0
+!
+interface Vlan103
+ ip address 10.96.0.1 255.255.248.0
+!
+interface Vlan104
+ ip address 10.95.0.1 255.255.248.0
+!
+interface Vlan105
+ ip address 10.94.0.1 255.255.248.0
+!
+interface Vlan106
+ ip address 10.94.8.1 255.255.248.0
+!
+interface Vlan107
+ ip address 10.94.16.1 255.255.248.0
+!
+interface Vlan192
+ ip address 192.168.16.1 255.255.255.0
+!
+interface Vlan600
+ ip address 10.101.0.4 255.255.240.0
+!
+ip forward-protocol nd
+ip http server
+ip http authentication local
+ip http secure-server
+ip route 0.0.0.0 0.0.0.0 10.99.0.100
+ip route 10.101.0.0 255.255.0.0 10.101.0.1
+ip ssh pubkey-chain
+  username admin
+   key-hash ssh-rsa BABA4BCAD4BF96FBBC4422A0472CC658 harris@Harriss-MacBook-Pro.local
+ip scp server enable
+!
+!
+!
+snmp-server community JNU_CAMPUS_WIFI RW
+snmp-server enable traps snmp authentication linkdown linkup coldstart warmstart
+snmp-server enable traps flowmon
+snmp-server enable traps transceiver all
+snmp-server enable traps call-home message-send-fail server-fail
+snmp-server enable traps rf
+snmp-server enable traps memory
+snmp-server enable traps cpu threshold
+snmp-server enable traps wireless bsnMobileStation bsnAccessPoint bsnRogue bsn80211Security bsnAutoRF bsnGeneral SI mobility mfp RRM AP rogue client
+snmp-server enable traps tty
+snmp-server enable traps auth-framework sec-violation
+snmp-server enable traps flash insertion removal
+snmp-server enable traps power-ethernet group 1
+snmp-server enable traps power-ethernet police
+snmp-server enable traps energywise
+snmp-server enable traps vtp
+snmp-server enable traps vlancreate
+snmp-server enable traps vlandelete
+snmp-server enable traps license
+snmp-server enable traps envmon fan shutdown supply temperature status
+snmp-server enable traps stackwise
+snmp-server enable traps port-security
+snmp-server enable traps fru-ctrl
+snmp-server enable traps entity
+snmp-server enable traps config-copy
+snmp-server enable traps config
+snmp-server enable traps config-ctid
+snmp-server enable traps event-manager
+snmp-server enable traps vstack
+snmp-server enable traps bridge newroot topologychange
+snmp-server enable traps ike policy delete
+snmp-server enable traps mac-notification change move threshold
+snmp-server enable traps vlan-membership
+snmp-server enable traps bulkstat collection
+!
+no vstack
+banner login ^CCCCCC
+                ===================================================
+                                     W A R N I N G
+                ---------------------------------------------------
+                Login to this system is restricted to individuals
+                authorized by CIS,JNU. In case you are not sure if
+                you are authorized to use this system, please do not
+                continue.
+                All activities on this system may be monitored and
+                recorded, and anyone using this system expressly
+                consents to such monitoring and is advised that if
+                such monitoring reveals possible criminal activity
+                or policy violation, the evidence of such monitoring
+                will be provided to law enforcement and/or other
+                officials.
+                ----------------------------------------------------^C
+!
+line con 0
+ exec-timeout 0 0
+ stopbits 1
+line aux 0
+ stopbits 1
+line vty 0 4
+ login local
+line vty 5 15
+ login
+!
+!
+monitor session 1 source interface Gi1/0/48
+monitor session 1 source interface Te1/1/1
+monitor session 1 destination interface Te1/1/2 encapsulation dot1q
+ntp server 10.101.0.115
+wsma agent exec
+ profile httplistener
+ profile httpslistener
+!
+wsma agent config
+ profile httplistener
+ profile httpslistener
+!
+wsma agent filesys
+ profile httplistener
+ profile httpslistener
+!
+wsma agent notify
+ profile httplistener
+ profile httpslistener
+!
+!
+wsma profile listener httplistener
+ transport http
+!
+wsma profile listener httpslistener
+ transport https
+!
+ap group default-group
+end

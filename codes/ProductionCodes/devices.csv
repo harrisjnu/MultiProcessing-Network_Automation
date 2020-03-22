@@ -1,0 +1,2 @@
+ip, fqdn, username, password, secret, os_type
+192.168.150.51,r1,admin,cisco,cisco,ios
