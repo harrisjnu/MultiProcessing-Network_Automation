@@ -1,5 +1,6 @@
 
 
+
 ## NAPALM LIBRARY BASED NETWORK AUTOMATION
 
 ## Module Imports
@@ -8,28 +9,88 @@ from napalm import get_network_driver
 import csv
 import multiprocessing as mp
 import time
-import json
+import logging
+from function_library import *
 
-print('CPU COUNT FOR MULTIPROCESSING :  ' + str(mp.cpu_count()))
+#logging.basicConfig(level=logging.INFO)
+# logging.debug('Logging Level is DEBUG')
+# logging.info('Logging Level is INFO')
+# logging.warning('Logging Level is WARNING')
+# logging.error('Logging Level is ERROR')
+# logging.critical('Logging Level is CRITICAL')
+
+print('CPU COUNT AVAILABLE FOR MULTIPROCESSING :  ' + str(mp.cpu_count()))
+
+devices_processed = []
+base_ip = '10.101.0.1' # IP OF NETWORK CORE/MANAGEMENT SERVER
+trace_ip = '8.8.8.8'
+config_check = False
 
 def device_operations(device):
-    device.open()
-    #print(device.get_facts())
-    #ping_base = device.traceroute('1.1.1.1')
-    #ping_base  = json.dumps(ping_base, sort_keys=True, indent=4)
-    #print(ping_base)
-    res = device.get_facts()
-    print(res['hostname'])
-    #commands = ['show run']
-    #res = device.cli(commands)
-    #print(res['show run'])
-    device.load_replace_candidate(filename='r1_config.txt')
-    diff = device.compare_config()
-    if len(diff) > 0:
-        print(diff)
-    # device.load_replace_candidate(filename='r1_config.txt')
-    # print(device.compare_config())
-    device.close()
+    try:
+        device.open()
+        #print(device.get_facts())
+        #ping_base = device.traceroute('1.1.1.1')
+        #ping_base  = json.dumps(ping_base, sort_keys=True, indent=4)
+        #print(ping_base)
+        # res = device.get_facts()
+        # hostname = (res['hostname'])
+
+            ### PRODUCTION CODE BEGIN
+        # CHECK FOR PING AND LATENCY SLA in ms
+        #respond = ping_from_device(device,base_ip,5.00)
+        #print(respond)
+        # CHECK FOR TRACEROUTE
+        # trace = trace_from_device(device, trace_ip, 5.00)
+        # print (trace)
+        device_info = get_info(device)
+        #print(device_info['hostname'])
+        last_file = getlatestfile(hostname)
+        if last_file == 'None':
+            logging.debug('FUNCTION: deviceoperations() NO CONFIG RECORD EXISTS CREATING')
+        else:
+            logging.debug('FUNCTION: deviceoperations() LAST CONFIG RECORD IS ' + last_file)
+
+        ### CONFIG CHANGES EVALUATION AND ROLLBACK
+
+        if config_check == True:
+            device.load_replace_candidate(filename=last_file)
+            diff = device.compare_config()
+            print(diff)
+            if len(diff) > 0:
+                print(diff)
+                user = input('Commit changes?<yes|no>')
+                if user == 'yes':
+                    print('Commit changes...')
+                    #device.commit_config() #--> DOUBLE HASHED. CAREFUL AND UNDERSTAND. IRREVERSABLE CONFIG CHANGE
+                    print('Done')
+                else:
+                    print('No changes required')
+                    ##device.discard_config() #--> DOUBLE HASHED. CAREFUL AND UNDERSTAND. IRREVERSABLE CONFIG CHANGE
+
+            user = input('Rollback?<yes|no>')
+            if user == 'yes':
+                print('ROLLING BACK CONFIG')
+                ##device.rollback() #--> DOUBLE HASHED. CAREFUL AND UNDERSTAND. IRREVERSABLE CONFIG CHANGE
+                print('Done')
+        ###
+        commands = ['show run']
+        res = device.cli(commands)
+        running_config = (res['show run'])
+        running_config = result_preprocessor(commands,running_config)
+        configstores(hostname,running_config)
+            ### PRODUCTION CODE ENDS
+
+        # device.load_replace_candidate(filename='r1_config.txt')
+        # diff = device.compare_config()
+        # if len(diff) > 0:
+        #     print(diff)
+        # device.load_replace_candidate(filename='r1_config.txt')
+        # print(device.compare_config())
+        device.close()
+    except:
+        pass
+
 
 if __name__ == "__main__":
     with open('devices.csv', 'r') as devices:
@@ -45,6 +106,7 @@ if __name__ == "__main__":
             password = row[3]
             secret = row[4]
             os_type = row[5]
+            devices_processed.append(hostname)
             if os_type == 'ios':
                 driver = get_network_driver('ios')
             elif os_type == 'junos':
@@ -68,36 +130,6 @@ if __name__ == "__main__":
         p.join()
 
     end = time.time()
-
+    print(devices_processed)
+    print(len(devices_processed))
     print('Script execution time:', end - start)
-##
-##
-# #########################################################################
-# with open('devices.csv','r') as devices:
-#     reader = csv.reader(devices)
-#     next(reader)
-#     for row in reader:
-#         print(row)
-#         ip = row[0]
-#         hostname = row[1]
-#         username = row[2]
-#         password = row[3]
-#         secret = row[4]
-#         os_type = row[5]
-#
-#         if os_type == 'ios':
-#             driver = get_network_driver('ios')
-#         elif os_type == 'junos':
-#             driver = get_network_driver('junos')
-#
-#         optional_args = {'secret':secret}
-#
-#         device = driver(ip,username,password,optional_args=optional_args)
-#         deviceoperations(device)
-
-
-# 192.168.150.52,r2.cisco.com,admin,cisco,cisco,ios
-# 192.168.150.53,r3.cisco.com,admin,cisco,cisco,ios
-# 192.168.150.54,r4.cisco.com,admin,cisco,cisco,ios
-# 192.168.150.55,r5.cisco.com,admin,cisco,cisco,ios
-# 192.168.150.56,r1.cisco.com,admin,cisco,cisco,ios
