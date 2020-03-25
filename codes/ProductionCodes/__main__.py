@@ -12,6 +12,8 @@ import time
 import logging
 from function_library import *
 
+#Enable Logging Module
+
 #logging.basicConfig(level=logging.INFO)
 # logging.debug('Logging Level is DEBUG')
 # logging.info('Logging Level is INFO')
@@ -29,12 +31,6 @@ config_check = False
 def device_operations(device):
     try:
         device.open()
-        #print(device.get_facts())
-        #ping_base = device.traceroute('1.1.1.1')
-        #ping_base  = json.dumps(ping_base, sort_keys=True, indent=4)
-        #print(ping_base)
-        # res = device.get_facts()
-        # hostname = (res['hostname'])
 
             ### PRODUCTION CODE BEGIN
         # CHECK FOR PING AND LATENCY SLA in ms
@@ -81,12 +77,6 @@ def device_operations(device):
         configstores(hostname,running_config)
             ### PRODUCTION CODE ENDS
 
-        # device.load_replace_candidate(filename='r1_config.txt')
-        # diff = device.compare_config()
-        # if len(diff) > 0:
-        #     print(diff)
-        # device.load_replace_candidate(filename='r1_config.txt')
-        # print(device.compare_config())
         device.close()
     except:
         pass
@@ -119,7 +109,8 @@ if __name__ == "__main__":
     start = time.time()
 
     processes = list()
-
+    
+### PARALLEL PROCESSING BLOCKS
     for device in device_list:
         processes.append(mp.Process(target=device_operations, args=(device,)))
 
