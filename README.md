@@ -16,7 +16,7 @@ User "pip install requirements.txt" on Python 3.6 or use Virtual environment upl
 
 UPDATES 25th Mar 2020
 
-Improvement!!!
+Improvements!!!
 
 CREDITS - COVID-19 LOCKDOWN - DAY3
 
@@ -24,4 +24,5 @@ CREDITS - COVID-19 LOCKDOWN - DAY3
 2. Timestamped configuration backups.
 3. Parallel Operations. Tested on 93 Router/L3 production network. Avg execution time 60.5 Secs. Avg of less than 1 sec/device.
 4. Configuration changes through txt file, gap/difference finding, confirmation before push.
-5. Configuration roll back by auto creating roll back file post commit .
+5. Configuration roll back by auto creating roll back file post commit.
+6. Pre-processor for trimming retrieved data into usable backup/metric before saving.
